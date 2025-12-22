@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Simple avatar SVG saved with .png extension to provide a fallback at /default-avatar.png -->
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="0" role="img">
+  <rect width="100%" height="100%" fill="#e6f4ea"/>
+  <g transform="translate(2,2) scale(0.8333)">
+    <circle cx="12" cy="8" r="4" fill="#9ae6b4" />
+    <rect x="6" y="14" rx="3" ry="3" width="12" height="6" fill="#d1fae5" />
+    <circle cx="12" cy="8" r="3.2" fill="#059669" opacity="0.12" />
+  </g>
+</svg>

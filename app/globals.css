@@ -20,7 +20,15 @@
 }
 
 body {
-  background: var(--background);
+  background-image: url('/images/rice-field.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-color: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
 }
+
+/* Note: pages that should not show the rice-field background (login, signup, home)
+   are wrapped in a full-viewport white container to override this global background. */

@@ -1,0 +1,509 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================
+// USER MODEL
+// =====================
+model User {
+  id                  Int                 @id @default(autoincrement())
+  firstName           String
+  lastName            String
+  username            String              @unique
+  email               String              @unique
+  password            String
+  role                String              @default("trainee")
+  status              String              @default("Active")
+
+  // Profile fields
+  phone               String?
+  location            String?
+  profilePicture      String?
+  specialization      String?
+  certifications      String[]            @default([])
+  bio                 String?
+  yearsOfExperience   Int?
+
+  // Trainer-specific stats
+  totalCourses        Int                 @default(0)
+  totalStudents       Int                 @default(0)
+  activeBatches       Int                 @default(0)
+  completionRate      String              @default("0%")
+
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  // Relations for trainers
+  quizzesCreated      Quiz[]              @relation("QuizCreator")
+  certificatesIssued  Certificate[]       @relation("CertificateIssuer")
+  noticesCreated      Notice[]            @relation("NoticeCreator")
+  batchesAssigned     Batch[]             @relation("BatchTrainer")
+  examScoresCreated   ExamScore[]         @relation("ExamScoreCreator")
+
+  // Relations for trainees
+  enrolledBatches     StudentBatch[]
+  quizAttempts        QuizAttempt[]
+  receivedCertificates Certificate[]      @relation("CertificateReceiver")
+  examScores          ExamScore[]         @relation("TraineeExamScore")
+  traineeProgresses   TraineeProgress[]
+  attendanceRecords   AttendanceRecord[]
+  traineeDocuments    TraineeDocument[]
+  passwordResetTokens PasswordResetToken[]
+
+  @@map("users")
+}
+
+// =====================
+// LEGACY TRAINER MODEL
+// =====================
+model Trainer {
+  id             Int             @id @default(autoincrement())
+  firstName      String
+  lastName       String
+  email          String          @unique
+  phone          String?
+  location       String?
+  profilePicture String?
+  specialization String?
+  certifications String[]        @default([])
+  createdAt      DateTime        @default(now())
+
+  // Relations
+  courses        TrainingCourse[]
+
+  @@map("trainers")
+}
+
+// =====================
+// LEGACY TRAINING COURSE MODEL
+// =====================
+model TrainingCourse {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  duration    Int
+  modules     String[]
+  trainerId   Int
+  trainer     Trainer   @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@map("training_courses")
+}
+
+// =====================
+// UPDATED COURSE MODEL (Dynamic + Modules)
+// =====================
+model Course {
+  id               Int           @id @default(autoincrement())
+  name             String
+  image            String?
+  beneficiaries    String[]      @default([])
+  category         String
+  topics           Int
+  duration         String
+  price            String
+  description      String
+  enrolledStudents Int           @default(0)
+
+  // Schedule fields
+  startDate        DateTime?
+  endDate          DateTime?
+  startTime        String?
+  endTime          String?
+  daysOfWeek       String[]      @default([])
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  // Relations
+  quizzes          Quiz[]
+  certificates     Certificate[]
+  batches          Batch[]
+  examScores       ExamScore[]
+  traineeProgresses TraineeProgress[]
+  traineeDocuments  TraineeDocument[]
+  modules          Module[]      // 🔥 new relation
+
+  @@map("courses")
+}
+
+// =====================
+// MODULE MODEL (Each course has modules)
+// =====================
+model Module {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String?
+  order       Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relation
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    Int
+  materials   Material[]   // 🔥 each module has multiple materials
+
+  @@map("modules")
+}
+
+// =====================
+// MATERIAL MODEL (Module-wise file uploads)
+// =====================
+model Material {
+  id         Int        @id @default(autoincrement())
+  title      String
+  fileUrl    String      // File path or Cloud URL
+  mimeType   String?
+  uploadedAt DateTime    @default(now())
+
+  // Relation
+  module     Module      @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  moduleId   Int
+
+  @@map("materials")
+}
+
+// =====================
+// QUIZ MODEL
+// =====================
+model Quiz {
+  id             Int           @id @default(autoincrement())
+  title          String
+  course         String
+  courseId       Int?
+  duration       String
+  totalMarks     Int
+  passingMarks   Int
+  questions      Json
+  totalQuestions Int
+  createdBy      String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  // Relations
+  creator        User           @relation("QuizCreator", fields: [createdBy], references: [email], onDelete: Cascade)
+  courseRef      Course?        @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  attempts       QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+// =====================
+// QUIZ ATTEMPT MODEL
+// =====================
+model QuizAttempt {
+  id           Int      @id @default(autoincrement())
+  quizId       Int
+  traineeId    Int?
+  traineeName  String
+  traineeEmail String
+  attemptCount Int      @default(1)
+  score        Int
+  totalMarks   Int
+  status       String
+  answers      Json
+  attemptedAt  DateTime @default(now())
+
+  // Relations
+  quiz         Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  trainee      User     @relation(fields: [traineeEmail], references: [email], onDelete: Cascade)
+
+  @@map("quiz_attempts")
+}
+
+// =====================
+// CERTIFICATE MODEL
+// =====================
+model Certificate {
+  id              Int      @id @default(autoincrement())
+  certificateId   String   @unique
+  traineeName     String
+  traineeEmail    String
+  course          String
+  courseId        Int?
+  templateId      Int
+  grade           String
+  completionDate  DateTime
+  issuedBy        String
+  issuedDate      DateTime @default(now())
+  status          String   @default("Issued")
+
+  // Relations
+  issuer          User     @relation("CertificateIssuer", fields: [issuedBy], references: [email], onDelete: Cascade)
+  receiver        User     @relation("CertificateReceiver", fields: [traineeEmail], references: [email], onDelete: Cascade)
+  courseRef       Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+
+  @@map("certificates")
+}
+
+// =====================
+// BATCH MODEL
+// =====================
+model Batch {
+  id                Int      @id @default(autoincrement())
+  batchCode         String   @unique
+  batchName         String
+  courseId          Int
+  courseName        String
+  trainerEmail      String
+  institutionId     Int?
+  startDate         DateTime
+  endDate           DateTime
+  schedule          String
+  timeSlot          String
+  liveClassLinks     Json?
+  location          String
+  totalStudents     Int
+  enrolledStudents  Int      @default(0)
+  status            String   @default("Upcoming")
+  progress          Int      @default(0)
+  color             String   @default("from-green-500 to-green-600")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  course            Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  trainer           User          @relation("BatchTrainer", fields: [trainerEmail], references: [email], onDelete: Cascade)
+  institution       Institution?  @relation("InstitutionBatches", fields: [institutionId], references: [id], onDelete: SetNull)
+  students          StudentBatch[]
+  examScores        ExamScore[]
+  attendanceRecords AttendanceRecord[]
+  traineeDocuments  TraineeDocument[]
+
+  @@map("batches")
+}
+
+// =====================
+// STUDENT-BATCH JUNCTION
+// =====================
+model StudentBatch {
+  id                Int      @id @default(autoincrement())
+  studentEmail      String
+  batchId           Int
+  enrolledDate      DateTime @default(now())
+  status            String   @default("Active")
+  attendance        Int      @default(0)
+  dailyTimeSpentMin Int      @default(0)  // minutes spent today
+  lastSessionDate   DateTime?              // date of last session
+
+  // Relations
+  student           User     @relation(fields: [studentEmail], references: [email], onDelete: Cascade)
+  batch             Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  timeLogs          SessionTimeLog[]       // track time per day
+
+  @@unique([studentEmail, batchId])
+  @@map("student_batches")
+}
+
+// =====================
+// SESSION TIME LOG (track daily time spent by trainee)
+// =====================
+model SessionTimeLog {
+  id           Int      @id @default(autoincrement())
+  studentEmail String
+  batchId      Int
+  date         DateTime  // session date
+  minutesSpent Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  studentBatch StudentBatch @relation(fields: [studentEmail, batchId], references: [studentEmail, batchId], onDelete: Cascade)
+
+  @@unique([studentEmail, batchId, date])
+  @@map("session_time_logs")
+}
+
+// =====================
+// EXAM SCORE MODEL
+// =====================
+model ExamScore {
+  id            Int      @id @default(autoincrement())
+  batchId       Int
+  traineeEmail  String
+  traineeName   String
+  examTitle     String
+  examType      String
+  courseId      Int?
+  totalMarks    Int
+  obtainedMarks Int
+  examDate      DateTime
+  document      String?
+  remarks       String?
+  createdBy     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  batch         Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  course        Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  creator       User     @relation("ExamScoreCreator", fields: [createdBy], references: [email], onDelete: Cascade)
+  trainee       User     @relation("TraineeExamScore", fields: [traineeEmail], references: [email], onDelete: Cascade)
+
+  @@map("exam_scores")
+}
+
+// =====================
+// NOTICE MODEL
+// =====================
+model Notice {
+  id                Int       @id @default(autoincrement())
+  title             String
+  description       String    @db.Text
+  priority          String    @default("medium")
+  validUntil        DateTime?
+  attachments       Json[]    @default([])
+
+  recipientAdmins   Boolean   @default(false)
+  recipientTrainers Boolean   @default(false)
+  recipientTrainees Boolean   @default(false)
+
+  createdBy         String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  creator           User      @relation("NoticeCreator", fields: [createdBy], references: [email], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([validUntil])
+  @@map("notices")
+}
+
+// =====================
+// CERTIFICATE TEMPLATE
+// =====================
+model CertificateTemplate {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  color       String
+  borderColor String
+  accentColor String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("certificate_templates")
+}
+
+// =====================
+// TRAINEE PROGRESS
+// =====================
+model TraineeProgress {
+  id           Int      @id @default(autoincrement())
+  studentEmail String
+  courseId     Int?
+  moduleKey    String?
+  progress     Int      @default(0)
+  lastSeenAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  student      User?    @relation(fields: [studentEmail], references: [email], onDelete: Cascade)
+  course       Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([studentEmail])
+  @@index([courseId])
+  @@map("trainee_progress")
+}
+
+// =====================
+// ATTENDANCE RECORD
+// =====================
+model AttendanceRecord {
+  id           Int      @id @default(autoincrement())
+  studentEmail String
+  batchId      Int
+  date         DateTime
+  status       String
+  remark       String?
+  createdAt    DateTime @default(now())
+
+  student      User     @relation(fields: [studentEmail], references: [email], onDelete: Cascade)
+  batch        Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@unique([studentEmail, batchId, date])
+  @@map("attendance_records")
+}
+
+// =====================
+// TRAINEE DOCUMENT
+// =====================
+model TraineeDocument {
+  id           Int      @id @default(autoincrement())
+  studentEmail String
+  courseId     Int?
+  batchId      Int?
+  title        String
+  fileUrl      String
+  mimeType     String?
+  uploadedBy   String?
+  createdAt    DateTime @default(now())
+
+  student      User?    @relation(fields: [studentEmail], references: [email], onDelete: Cascade)
+  course       Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  batch        Batch?   @relation(fields: [batchId], references: [id], onDelete: SetNull)
+
+  @@map("trainee_documents")
+}
+
+// =====================
+// PASSWORD RESET TOKEN
+// =====================
+model PasswordResetToken {
+  id         Int      @id @default(autoincrement())
+  token      String   @unique
+  userEmail  String
+  expiresAt  DateTime
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+}
+
+// =====================
+// LIBRARY RESOURCE
+// =====================
+model LibraryResource {
+  id         Int      @id @default(autoincrement())
+  title      String
+  category   String
+  uploadDate DateTime @default(now())
+  status     String   @default("Active")
+  fileName   String
+  fileUrl    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@map("library_resources")
+}
+
+// =====================
+// INSTITUTION MODEL
+// =====================
+model Institution {
+  id              Int       @id @default(autoincrement())
+  code            String    @unique
+  name            String    @unique
+  address         String?
+  email           String?   @unique
+  contactNumber   String?
+  status          String    @default("Active")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  batches         Batch[]   @relation("InstitutionBatches")
+
+  @@map("institutions")
+}
+
