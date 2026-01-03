@@ -16,7 +16,7 @@ export default function AgrivalueLogo() {
       className="fixed top-4 right-6 z-50 w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden shadow-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:scale-105 transition-transform duration-200"
     >
       <img
-        src="/images/agrivaluechain.png"
+        src="/images/logo.png"
         alt="AgriValue"
         onError={(e) => {
           // fallback to generic logo if specific agrivaluechain image not present

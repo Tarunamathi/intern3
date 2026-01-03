@@ -12,7 +12,7 @@ export default function Header() {
 
       {/* Navigation */}
       <nav className="space-x-6">
-        <Link href="/about" className="text-black hover:text-green-600">
+        <Link href="/designs/about-us-2" className="text-black hover:text-green-600">
           About
         </Link>
         <Link href="/livelihood" className="text-black hover:text-green-600">
