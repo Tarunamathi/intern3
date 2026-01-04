@@ -32,3 +32,8 @@ body {
 
 /* Note: pages that should not show the rice-field background (login, signup, home)
    are wrapped in a full-viewport white container to override this global background. */
+
+/* Hide the global AgrivalueLogo on home page */
+button[aria-label="Go back"] {
+  display: none !important;
+}

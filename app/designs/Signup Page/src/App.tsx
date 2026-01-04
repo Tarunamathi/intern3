@@ -18,9 +18,9 @@ function NoZoomLogopVariant() {
   );
 }
 
-function Input({ placeholder, value, onChange, onFocus, onBlur, isFocused, hasError, type = "text" }: { 
+function Input({ placeholder, value, onChange, onFocus, onBlur, isFocused, hasError, type = "text" }: {
   placeholder: string;
-  value: string; 
+  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: () => void;
   onBlur: () => void;
@@ -48,9 +48,9 @@ function Input({ placeholder, value, onChange, onFocus, onBlur, isFocused, hasEr
   );
 }
 
-function PasswordInput({ placeholder, value, onChange, onFocus, onBlur, isFocused, showPassword, togglePassword, hasError }: { 
+function PasswordInput({ placeholder, value, onChange, onFocus, onBlur, isFocused, showPassword, togglePassword, hasError }: {
   placeholder: string;
-  value: string; 
+  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: () => void;
   onBlur: () => void;
@@ -86,10 +86,10 @@ function PasswordInput({ placeholder, value, onChange, onFocus, onBlur, isFocuse
   );
 }
 
-function InputField({ label, placeholder, value, onChange, onBlur, textColor = "text-neutral-50", hasError, errorMessage, type = "text" }: { 
-  label: string; 
-  placeholder: string; 
-  value: string; 
+function InputField({ label, placeholder, value, onChange, onBlur, textColor = "text-neutral-50", hasError, errorMessage, type = "text" }: {
+  label: string;
+  placeholder: string;
+  value: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
   textColor?: string;
@@ -98,11 +98,11 @@ function InputField({ label, placeholder, value, onChange, onBlur, textColor = "
   type?: string;
 }) {
   const [isFocused, setIsFocused] = useState(false);
-  
+
   return (
     <div className="content-stretch flex flex-col gap-[8px] items-start relative shrink-0 w-full" data-name="Input Field">
       <p className={`font-['HeliosExt:Bold',sans-serif] leading-[1.4] min-w-full not-italic relative shrink-0 text-[16px] ${textColor} w-[min-content] transition-all duration-300 ${isFocused ? 'text-white' : ''}`}>{label}</p>
-      <Input 
+      <Input
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -122,10 +122,10 @@ function InputField({ label, placeholder, value, onChange, onBlur, textColor = "
   );
 }
 
-function PasswordField({ label, placeholder, value, onChange, hasError, errorMessage, showStrength }: { 
-  label: string; 
-  placeholder: string; 
-  value: string; 
+function PasswordField({ label, placeholder, value, onChange, hasError, errorMessage, showStrength }: {
+  label: string;
+  placeholder: string;
+  value: string;
   onChange: (value: string) => void;
   hasError?: boolean;
   errorMessage?: string;
@@ -135,29 +135,29 @@ function PasswordField({ label, placeholder, value, onChange, hasError, errorMes
   const props: any = arguments[0] as any;
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const getPasswordStrength = (password: string) => {
     if (password.length === 0) return { strength: 0, label: '', color: '' };
     if (password.length < 6) return { strength: 1, label: 'Weak', color: 'bg-red-500' };
-    
+
     let strength = 1;
     if (password.length >= 8) strength++;
     if (/[A-Z]/.test(password)) strength++;
     if (/[0-9]/.test(password)) strength++;
     if (/[^A-Za-z0-9]/.test(password)) strength++;
-    
+
     if (strength <= 2) return { strength: 1, label: 'Weak', color: 'bg-red-500' };
     if (strength === 3) return { strength: 2, label: 'Fair', color: 'bg-yellow-500' };
     if (strength === 4) return { strength: 3, label: 'Good', color: 'bg-green-500' };
     return { strength: 4, label: 'Strong', color: 'bg-green-600' };
   };
-  
+
   const passwordStrength = showStrength ? getPasswordStrength(value) : null;
-  
+
   return (
     <div className="content-stretch flex flex-col gap-[8px] items-start relative shrink-0 w-full" data-name="Input Field">
       <p className={`font-['HeliosExt:Bold',sans-serif] leading-[1.4] min-w-full not-italic relative shrink-0 text-[16px] text-white w-[min-content] transition-all duration-300 ${isFocused ? 'opacity-100' : 'opacity-90'}`}>{label}</p>
-      <PasswordInput 
+      <PasswordInput
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -174,9 +174,8 @@ function PasswordField({ label, placeholder, value, onChange, hasError, errorMes
             {[1, 2, 3, 4].map((level) => (
               <div
                 key={level}
-                className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                  level <= passwordStrength.strength ? passwordStrength.color : 'bg-gray-600'
-                }`}
+                className={`h-1 flex-1 rounded-full transition-all duration-300 ${level <= passwordStrength.strength ? passwordStrength.color : 'bg-gray-600'
+                  }`}
               />
             ))}
           </div>
@@ -195,7 +194,7 @@ function PasswordField({ label, placeholder, value, onChange, hasError, errorMes
   );
 }
 
-function MainField({ firstName, setFirstName, lastName, setLastName, username, setUsername, email, setEmail, password, setPassword, confirmPassword, setConfirmPassword, errors, touched, handleBlur }: { 
+function MainField({ firstName, setFirstName, lastName, setLastName, username, setUsername, email, setEmail, password, setPassword, confirmPassword, setConfirmPassword, errors, touched, handleBlur }: {
   firstName: string;
   setFirstName: (value: string) => void;
   lastName: string;
@@ -215,21 +214,21 @@ function MainField({ firstName, setFirstName, lastName, setLastName, username, s
   return (
     <div className="bg-[rgba(250,250,250,0.2)] box-border content-stretch flex flex-col gap-[24px] w-full max-w-[539px] min-w-[280px] pb-[24px] pt-[18px] px-[24px] md:px-[28px] rounded-[8px] mx-auto backdrop-blur-sm" data-name="main field">
       <div aria-hidden="true" className="absolute border border-[#d9d9d9] border-solid inset-0 pointer-events-none rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]" />
-      
+
       {/* First name and Last name row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-        <InputField 
-          label="First name" 
-          placeholder="Name" 
+        <InputField
+          label="First name"
+          placeholder="Name"
           value={firstName}
           onChange={setFirstName}
           hasError={touched.firstName && !!errors.firstName}
           errorMessage={errors.firstName}
           onBlur={() => handleBlur('firstName')}
         />
-        <InputField 
-          label="Last name" 
-          placeholder="Name" 
+        <InputField
+          label="Last name"
+          placeholder="Name"
           value={lastName}
           onChange={setLastName}
           textColor="text-white"
@@ -253,9 +252,9 @@ function MainField({ firstName, setFirstName, lastName, setLastName, username, s
       </div>
 
       {/* Email Address */}
-      <InputField 
-        label="Email Address" 
-        placeholder="example@email.com" 
+      <InputField
+        label="Email Address"
+        placeholder="example@email.com"
         value={email}
         onChange={setEmail}
         type="email"
@@ -265,9 +264,9 @@ function MainField({ firstName, setFirstName, lastName, setLastName, username, s
       />
 
       {/* Password */}
-      <PasswordField 
-        label="Password" 
-        placeholder="Enter strong password" 
+      <PasswordField
+        label="Password"
+        placeholder="Enter strong password"
         value={password}
         onChange={setPassword}
         hasError={touched.password && !!errors.password}
@@ -293,13 +292,12 @@ function MainField({ firstName, setFirstName, lastName, setLastName, username, s
 
 function Button({ isActive, onClick, children }: { isActive: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`box-border content-stretch flex gap-[8px] items-center justify-center overflow-clip p-[12px] rounded-[8px] flex-1 min-w-[100px] transition-all duration-300 ${
-        isActive 
-          ? 'bg-[rgba(255,255,255,0.43)] hover:bg-[rgba(255,255,255,0.6)] scale-[1.05]' 
-          : 'bg-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.3)]'
-      }`} 
+      className={`box-border content-stretch flex gap-[8px] items-center justify-center overflow-clip p-[12px] rounded-[8px] flex-1 min-w-[100px] transition-all duration-300 ${isActive
+        ? 'bg-[rgba(255,255,255,0.43)] hover:bg-[rgba(255,255,255,0.6)] scale-[1.05]'
+        : 'bg-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.3)]'
+        }`}
       data-name="Button"
     >
       <p className="font-['HeliosExt:Bold',sans-serif] leading-none not-italic relative shrink-0 text-[16px] text-black text-nowrap whitespace-pre">{children}</p>
@@ -309,13 +307,12 @@ function Button({ isActive, onClick, children }: { isActive: boolean; onClick: (
 
 function Button2({ isActive, onClick, children }: { isActive: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`rounded-[8px] flex-1 min-w-[100px] relative border border-[rgba(44,44,44,0.33)] border-solid transition-all duration-300 ${
-        isActive 
-          ? 'bg-[rgba(180,109,47,0.7)] hover:bg-[rgba(180,109,47,0.85)] scale-[1.05]' 
-          : 'bg-[rgba(180,109,47,0.4)] hover:bg-[rgba(180,109,47,0.6)]'
-      }`} 
+      className={`rounded-[8px] flex-1 min-w-[100px] relative border border-[rgba(44,44,44,0.33)] border-solid transition-all duration-300 ${isActive
+        ? 'bg-[rgba(180,109,47,0.7)] hover:bg-[rgba(180,109,47,0.85)] scale-[1.05]'
+        : 'bg-[rgba(180,109,47,0.4)] hover:bg-[rgba(180,109,47,0.6)]'
+        }`}
       data-name="Button"
     >
       <div className="box-border content-stretch flex gap-[8px] items-center justify-center overflow-clip p-[12px] relative rounded-[inherit] w-full">
@@ -327,12 +324,11 @@ function Button2({ isActive, onClick, children }: { isActive: boolean; onClick: 
 
 function RegisterButton({ onClick, disabled, isLoading }: { onClick: () => void; disabled: boolean; isLoading: boolean }) {
   return (
-    <button 
+    <button
       onClick={onClick}
       disabled={disabled || isLoading}
-      className={`bg-[rgba(180,109,47,0.7)] box-border content-stretch flex gap-[8px] items-center justify-center overflow-clip p-[12px] rounded-[8px] w-full max-w-[383px] mx-auto transition-all duration-300 ${
-        disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[rgba(180,109,47,0.85)] hover:scale-[1.02] active:scale-[0.98]'
-      }`} 
+      className={`bg-[rgba(180,109,47,0.7)] box-border content-stretch flex gap-[8px] items-center justify-center overflow-clip p-[12px] rounded-[8px] w-full max-w-[383px] mx-auto transition-all duration-300 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[rgba(180,109,47,0.85)] hover:scale-[1.02] active:scale-[0.98]'
+        }`}
       data-name="Button"
     >
       {isLoading ? (
@@ -346,9 +342,9 @@ function RegisterButton({ onClick, disabled, isLoading }: { onClick: () => void;
 
 function X({ onClick }: { onClick: () => void }) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className="relative shrink-0 size-[16px] bg-transparent border-none cursor-pointer hover:opacity-70 transition-opacity" 
+      className="relative shrink-0 size-[16px] bg-transparent border-none cursor-pointer hover:opacity-70 transition-opacity"
       data-name="X"
       aria-label="Clear search"
     >
@@ -358,26 +354,6 @@ function X({ onClick }: { onClick: () => void }) {
         </g>
       </svg>
     </button>
-  );
-}
-
-function Search() {
-  const [searchValue, setSearchValue] = useState("");
-  
-  return (
-    <div className="bg-white h-[44px] relative rounded-[9999px] shrink-0 w-full max-w-[275px] transition-all duration-300 hover:shadow-lg" data-name="Search">
-      <div className="box-border content-stretch flex gap-[8px] h-[44px] items-center overflow-clip px-[16px] py-[12px] relative rounded-[inherit] w-full">
-        <input
-          type="text"
-          placeholder="Search"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          className="basis-0 font-['Inter:Regular',sans-serif] font-normal grow leading-none min-h-px min-w-px not-italic relative shrink-0 text-[#1e1e1e] text-[16px] bg-transparent border-none outline-none placeholder:text-[#1e1e1e]"
-        />
-        {searchValue && <X onClick={() => setSearchValue("")} />}
-      </div>
-      <div aria-hidden="true" className="absolute border border-[#d9d9d9] border-solid inset-[-0.5px] pointer-events-none rounded-[9999.5px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]" />
-    </div>
   );
 }
 
@@ -454,12 +430,12 @@ export default function Signup() {
 
   // enable register option even if user hasn't explicitly toggled the T&C checkbox
   const isFormValid = firstName.trim().length > 0 &&
-                      lastName.trim().length > 0 &&
-                      username.trim().length > 0 &&
-                      email.trim().length > 0 &&
-                      password.length > 0 &&
-                      confirmPassword.length > 0 &&
-                      password === confirmPassword;
+    lastName.trim().length > 0 &&
+    username.trim().length > 0 &&
+    email.trim().length > 0 &&
+    password.length > 0 &&
+    confirmPassword.length > 0 &&
+    password === confirmPassword;
 
   const validate = () => {
     const newErrors: any = {};
@@ -483,10 +459,10 @@ export default function Signup() {
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full" data-name="IMG_3406 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img 
-            alt="" 
-            className="absolute min-h-full min-w-full object-cover left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-110 transition-transform duration-[10s] hover:scale-[1.15]" 
-            src={imgImg34061?.src ?? imgImg34061} 
+          <img
+            alt=""
+            className="absolute min-h-full min-w-full object-cover left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-110 transition-transform duration-[10s] hover:scale-[1.15]"
+            src={imgImg34061?.src ?? imgImg34061}
           />
         </div>
       </div>
@@ -494,17 +470,17 @@ export default function Signup() {
       {/* Overlay and Gradient */}
       <div className="absolute inset-0 w-full h-full pointer-events-none">
         <div className="absolute bottom-0 left-0 right-0 h-[40%] overflow-hidden" data-name="overlay">
-          <img 
-            alt="" 
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full min-w-[1247px] object-cover" 
-            src={imgOverlay?.src ?? imgOverlay} 
+          <img
+            alt=""
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full min-w-[1247px] object-cover"
+            src={imgOverlay?.src ?? imgOverlay}
           />
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-[40%] overflow-hidden" data-name="gradient">
-          <img 
-            alt="" 
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full min-w-[1347px] object-cover" 
-            src={imgGradient?.src ?? imgGradient} 
+          <img
+            alt=""
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full min-w-[1347px] object-cover"
+            src={imgGradient?.src ?? imgGradient}
           />
         </div>
       </div>
@@ -517,18 +493,13 @@ export default function Signup() {
           <div className="flex-shrink-0 hover:scale-110 transition-transform duration-300">
             <NoZoomLogopVariant />
           </div>
-
-          {/* Search */}
-          <div className="flex items-center ml-auto">
-            <Search />
-          </div>
         </header>
 
         {/* Main Content */}
         <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 pb-32 sm:pb-40 pt-8 animate-[fadeInUp_0.8s_ease-out]">
           {/* Toggle Buttons */}
           <div className="flex gap-[8px] mb-8 w-full max-w-[450px] justify-center px-4">
-            <Button isActive={mode === 'login'} onClick={() => setMode('login')}>Login</Button>
+            <Button isActive={mode === 'login'} onClick={() => router.push('/login')}>Login</Button>
             <Button2 isActive={mode === 'signup'} onClick={() => setMode('signup')}>Sign-Up</Button2>
           </div>
 
@@ -536,7 +507,7 @@ export default function Signup() {
           <div className="w-full max-w-[640px] px-4 mb-6 relative mx-auto">
             <div className="flex items-center justify-center">
               <div className="w-full">
-                <MainField 
+                <MainField
                   firstName={firstName}
                   setFirstName={setFirstName}
                   lastName={lastName}
@@ -566,7 +537,7 @@ export default function Signup() {
           <div className="w-full max-w-[539px] px-4 mb-8">
             <div className="flex items-center gap-2">
               <Checkbox checked={agreedToTerms} onChange={setAgreedToTerms} />
-              <button 
+              <button
                 onClick={() => setAgreedToTerms(!agreedToTerms)}
                 className="font-['HeliosExt:Bold',sans-serif] leading-none not-italic text-[14px] text-white hover:underline bg-transparent border-none cursor-pointer text-left transition-all duration-300 hover:text-[#f09444]"
               >
@@ -582,6 +553,19 @@ export default function Signup() {
           <h1 className="[text-shadow:rgba(0,0,0,0.25)_0px_4px_4px,rgba(0,0,0,0.25)_0px_4px_4px] font-['HeliosExt:Bold',sans-serif] leading-none not-italic text-[32px] sm:text-[48px] md:text-[56px] lg:text-[60px] text-center text-white max-w-[90%] sm:max-w-[1130px] transition-all duration-500 hover:scale-105">
             Welcome to Agri Value Chain
           </h1>
+
+          {/* Login Link */}
+          <p className="font-['HeliosExt:Bold',sans-serif] leading-none not-italic text-[#f09444] text-[14px] text-center">
+            <>
+              <span>Already have an account ? </span>
+              <button
+                onClick={() => router.push('/login')}
+                className="text-neutral-50 hover:underline bg-transparent border-none cursor-pointer transition-all duration-300 hover:text-[#f09444]"
+              >
+                Login Now
+              </button>
+            </>
+          </p>
         </footer>
       </div>
 

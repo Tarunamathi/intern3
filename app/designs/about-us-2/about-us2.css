@@ -6,10 +6,11 @@
 
 .container {
     width: 100%;
-    height: 100%;
+    min-width: 100vw;
+    min-height: 100vh;
     background-image: url("https://i.ibb.co/jPZF8fxX/Frame-9-imgupscaler-ai-General-16-K.jpg");
     background-size: cover;
-    background-position: top;
+    background-position: center;
     background-repeat: no-repeat;
     padding: 30px 50px;
     position: relative;
@@ -50,21 +51,24 @@
 
 .navlink {
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
+    gap: 40px;
     margin-top: 40px;
 
     a {
         text-decoration: none;
         color: black;
         font-family: 'Poppins', sans-serif;
-        font-size: 18px;
+        font-size: 28px;
         font-weight: bold;
         transition: all 0.1s ease-in-out;
+        letter-spacing: 1px;
     }
 
     a:hover {
         color: #CFD737;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        transform: scale(1.1);
     }
 }
 
@@ -155,8 +159,8 @@
 
     .card {
         position: relative;
-        width: 15%;
-        height: 250px;
+        width: 22%;
+        height: 320px;
         background-color: #FBFFB2BF;
         border-radius: 23px;
         display: flex;
@@ -199,7 +203,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 160ms ease, transform 160ms ease, visibility 160ms;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
             border: 1px solid #e6e6e6;
             z-index: 50;
             text-align: left;
@@ -220,14 +224,204 @@
             color: #222222;
         }
 
-        /* show tooltip on hover and focus */
-        &:hover .tooltip,
-        &:focus-within .tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
+        /* tooltip only appears when card has .open (click) - disable hover/focus popup */
     }
+
+    .details-toggle {
+        margin-top: 8px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: #fff;
+        touch-action: manipulation;
+    }
+
+    .details-toggle .arrow {
+        transition: transform 200ms ease;
+        margin-left: 8px;
+    }
+
+    /* When a card is open, show the tooltip content above the card with white background */
+    .card.open .tooltip {
+        position: absolute;
+        left: 50%;
+        bottom: 110%;
+        transform: translateX(-50%);
+        opacity: 1;
+        visibility: visible;
+        width: 360px;
+        margin: 0 0 12px 0;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        background: #ffffff;
+        color: #111111;
+        border: 1px solid #e6e6e6;
+        text-align: left;
+        z-index: 120;
+        padding: 14px 16px;
+        border-radius: 8px;
+    }
+
+    /* Ensure link buttons look good on white background */
+    .card.open .tooltip .pdf-link {
+        background: #CFD737;
+        color: #111;
+        border: 1px solid rgba(0, 0, 0, 0.07);
+    }
+}
+
+/* Pillars accordion styles */
+.pillars {
+    margin-top: 60px;
+}
+
+.pillars-heading {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    margin-bottom: 20px;
+}
+
+.pillars-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 1000px;
+}
+
+.pillar {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pillar-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.pillar-title {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.arrow {
+    transition: transform 200ms ease;
+    font-size: 20px;
+}
+
+.arrow.rotated {
+    transform: rotate(180deg);
+}
+
+.pillar-content {
+    max-height: 0;
+    transition: max-height 240ms ease;
+    overflow: hidden;
+    padding: 0 22px;
+}
+
+.pillar.open .pillar-content {
+    max-height: 400px;
+    padding: 12px 22px 22px 22px;
+}
+
+.pillar-body h4 {
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.pillar-body ul {
+    list-style: disc;
+    padding-left: 20px;
+    color: #eee;
+}
+
+.pdf-link {
+    display: inline-block;
+    padding: 6px 10px;
+    background: #ffffff22;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    border: 1px solid #ffffff33;
+    margin-left: 4px;
+}
+
+/* Hide the global AgrivalueLogo on this page */
+button[aria-label="Go back"] {
+    display: none !important;
+}
+
+.pdf-link:hover {
+    background: #ffffff33;
+}
+
+/* PDF Modal Styles */
+.pdf-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.pdf-modal {
+    position: relative;
+    width: 90%;
+    height: 90vh;
+    max-width: 1000px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pdf-modal-close:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.pdf-modal-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
 /* Responsive Design */
